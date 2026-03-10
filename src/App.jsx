@@ -16,13 +16,12 @@ import {
 
 // ─── Firebase Config ──────────────────────────────────────────────────────
 const FIREBASE_CONFIG = {
-    apiKey: "AIzaSyCfoYwC6jWGquo3EuYQf_r-PTmmWRHrS38",
-    authDomain: "badminton-pro-b4a55.firebaseapp.com",
-    projectId: "badminton-pro-b4a55",
-    storageBucket: "badminton-pro-b4a55.firebasestorage.app",
-    messagingSenderId: "567879594779",
-    appId: "1:567879594779:web:8cd977b2b9c715f6fd99be",
-    measurementId: "G-1SWTYMWF8G"
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 let app, db, auth;

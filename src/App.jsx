@@ -16,12 +16,13 @@ import {
 
 // ─── Firebase Config ──────────────────────────────────────────────────────
 const FIREBASE_CONFIG = {
-    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-    appId: import.meta.env.VITE_FIREBASE_APP_ID
+    apiKey: "AIzaSyCfoYwC6jWGquo3EuYQf_r-PTmmWRHrS38",
+    authDomain: "badminton-pro-b4a55.firebaseapp.com",
+    projectId: "badminton-pro-b4a55",
+    storageBucket: "badminton-pro-b4a55.firebasestorage.app",
+    messagingSenderId: "567879594779",
+    appId: "1:567879594779:web:8cd977b2b9c715f6fd99be",
+    measurementId: "G-1SWTYMWF8G"
 };
 
 let app, db, auth;
@@ -1033,7 +1034,7 @@ function HistoryPage({ tenantId }) {
     useEffect(() => {
         const unsub = dbOnSnapshot(`tenants/${tenantId}/tournaments`, snap => {
             setTournaments((snap.docs || []).map(d => ({ id: d.id, ...d.data() }))
-                .filter(t => t.status === "finished").sort((a, b) => (b.finishedAt || 0) - (a.finishedAt || 0)));
+                .filter(t => t.status === "finished").sort((a, b) => (b.matchDate  || 0) - (a.matchDate  || 0)));
         });
         return () => unsub && unsub();
     }, [tenantId]);
@@ -1058,7 +1059,7 @@ function HistoryPage({ tenantId }) {
                             style={{ boxShadow: "0 4px 24px rgba(0,0,0,.3)" }}>
                             <div className="flex items-start justify-between gap-2 mb-4">
                                 <span className="font-bold text-sm" style={{ color: C.text }}>{t.name}</span>
-                                <span className="text-[10px] flex-shrink-0 mt-0.5" style={{ color: C.muted }}>{fmtDate(t.finishedAt)}</span>
+                                <span className="text-[10px] flex-shrink-0 mt-0.5" style={{ color: C.muted }}>{fmtDate(t.matchDate )}</span>
                             </div>
                             <div className="flex flex-wrap gap-1.5">
                                 <Badge variant="default">{t.config?.type === "singles" ? "เดี่ยว" : "คู่"}</Badge>
@@ -1125,7 +1126,7 @@ function HistoryDetail({ tenantId, tournament, onBack }) {
                 <div>
                     <h1 className="text-lg font-bold" style={{ color: C.gold }}>{tournament.name}</h1>
                     <p className="text-xs" style={{ color: C.muted }}>
-                        {fmtDate(tournament.finishedAt)} · {config.type === "singles" ? "เดี่ยว" : "คู่"} · {config.groups} กลุ่ม · {config.sets} เซต
+                        {fmtDate(tournament.matchDate )} · {config.type === "singles" ? "เดี่ยว" : "คู่"} · {config.groups} กลุ่ม · {config.sets} เซต
                     </p>
                 </div>
             </div>
@@ -1645,7 +1646,7 @@ function AdminManageTournaments({ tenantId }) {
 
     const activeTournament = tournaments.find(t => t.status === "active");
 
-    const finish = async t => { if (!confirm(`จบรายการ "${t.name}"?`)) return; await dbUpdateDoc(`tenants/${tenantId}/tournaments/${t.id}`, { status: "finished", finishedAt: Date.now() }); };
+    const finish = async t => { if (!confirm(`จบรายการ "${t.name}"?`)) return; await dbUpdateDoc(`tenants/${tenantId}/tournaments/${t.id}`, { status: "finished", matchDate : Date.now() }); };
     const archive = async t => { if (!confirm(`ลบรายการ "${t.name}"?`)) return; await dbUpdateDoc(`tenants/${tenantId}/tournaments/${t.id}`, { status: "archived" }); };
 
     const startEdit = t => {

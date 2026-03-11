@@ -870,8 +870,7 @@ function SetRow({ matchId, si, totalSets, initialA, initialB, active, done, winn
     const handleBlurInput = (e, side) => {
         focusedRef.current = false;
         e.target.style.boxShadow = "none";
-        const val = side==="a" ? valA : valB;
-        if (val !== "") onBlur(matchId, si, side, val);
+        onBlur(matchId, si, side, side === "a" ? valA : valB);
     };
 
     return (

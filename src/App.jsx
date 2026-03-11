@@ -531,8 +531,8 @@ function TenantNav({ tenant, isAdmin, user, setUser, page, setPage }) {
                 {/* Badminton-Pro brand */}
                 <div className="flex items-center gap-2 flex-shrink-0">
                     <ShuttleIcon size={18} />
-                    <span className="font-extrabold text-xs tracking-[3px] uppercase hidden sm:block" style={{ color: C.gold }}>
-                        Badminton-Pro
+                    <span className="font-extrabold text-xs tracking-[1px] hidden sm:block" style={{ color: C.gold }}>
+                        Badminton-ProX
                     </span>
                 </div>
 
@@ -610,8 +610,8 @@ function TenantHome({ tenant, isAdmin }) {
             <div className="relative overflow-hidden">
                 <div className="absolute inset-0 pointer-events-none"
                     style={{ background: `radial-gradient(ellipse 80% 100% at 50% -20%,${C.gold}0e,transparent 70%)` }} />
-                <div className="relative px-6 lg:px-12 py-12 lg:py-16 max-w-screen-2xl mx-auto">
-                    <div className="flex items-end justify-between gap-6 flex-wrap">
+                <div className="relative px-6 lg:px-12 py-8 lg:py-12 max-w-screen-2xl mx-auto">
+                    <div className="flex items-center justify-between gap-6 flex-wrap">
                         <div>
                             {/* Badminton-Pro brand with logo */}
                             <div className="flex items-center gap-2.5 mb-3">
@@ -776,9 +776,58 @@ function ActiveTournament({ tenantId, tournament }) {
 }
 
 function MatchList({ matches, config, onUpdate, teamName }) {
-    if (!matches.length) return <p className="text-sm py-16 text-center" style={{ color: C.muted }}>ไม่มีโปรแกรมการแข่งขัน</p>;
-    return <div className="flex flex-col gap-4">{matches.map((m, i) => <MatchCard key={m.id} match={m} idx={i} config={config} onUpdate={onUpdate} teamName={teamName} />)}</div>;
+  const [query, setQuery] = useState("");
+
+  const filtered = query.trim()
+    ? matches.filter(m => {
+        const q = query.trim().toLowerCase();
+        const players = [
+          ...(m.teamA?.players||[]),
+          ...(m.teamB?.players||[]),
+        ];
+        return players.some(p => p.name?.toLowerCase().includes(q));
+      })
+    : matches;
+
+  return (
+    <div className="flex flex-col gap-4">
+      {/* Search box */}
+      <div className="relative">
+        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm pointer-events-none"
+          style={{color:C.muted}}>🔍</span>
+        <input
+          type="text"
+          placeholder="ค้นหา…"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          className="w-full rounded-xl pl-9 pr-4 py-2.5 text-sm outline-none transition-all"
+          style={{
+            background:"rgba(255,255,255,.05)",
+            border:`1px solid ${query ? C.gold+"44" : "rgba(255,255,255,.1)"}`,
+            color: C.text,
+          }}
+        />
+        {query && (
+          <button onClick={()=>setQuery("")}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-xs px-1.5 py-0.5 rounded-md transition-all"
+            style={{color:C.muted}}>✕</button>
+        )}
+      </div>
+
+      {/* Results */}
+      {!matches.length && (
+        <p className="text-sm py-16 text-center" style={{color:C.muted}}>ไม่มีโปรแกรมการแข่งขัน</p>
+      )}
+      {matches.length > 0 && !filtered.length && (
+        <p className="text-sm py-10 text-center" style={{color:C.muted}}>ไม่พบ "{query}"</p>
+      )}
+      {filtered.map((m,i) => (
+        <MatchCard key={m.id} match={m} idx={matches.indexOf(m)} config={config} onUpdate={onUpdate} teamName={teamName}/>
+      ))}
+    </div>
+  );
 }
+
 
 // ─── Match Card ───────────────────────────────────────────────────────────
 // ─── Set Row — one row per set, spans all 3 grid columns ─────────────────
